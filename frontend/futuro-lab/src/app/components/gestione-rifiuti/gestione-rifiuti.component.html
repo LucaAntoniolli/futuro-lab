@@ -1,0 +1,90 @@
+<div class="gestione-container">
+    <div class="header-section">
+        <h1>Gestione Anagrafica Rifiuti</h1>
+        <button class="btn btn-primary" (click)="openAddDialog()">
+            <span>+</span> Aggiungi Nuovo
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Descrizione</th>
+                    <th>Luogo Produzione</th>
+                    <th>Data Produzione</th>
+                    <th>Note</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let rifiuto of rifiuti">
+                    <td>{{ rifiuto.id }}</td>
+                    <td>{{ rifiuto.tipo }}</td>
+                    <td>{{ rifiuto.descrizione }}</td>
+                    <td>{{ rifiuto.luogoProduzione }}</td>
+                    <td>{{ rifiuto.dataProduzione?.format('DD/MM/YYYY') || '-' }}</td>
+                    <td>{{ rifiuto.note }}</td>
+                    <td class="actions">
+                        <button class="btn btn-edit" (click)="openEditDialog(rifiuto)">Modifica</button>
+                        <button class="btn btn-delete" (click)="deleteRifiuto(rifiuto.id)">Elimina</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="rifiuti.length === 0" class="no-data">
+            Nessun dato disponibile
+        </div>
+    </div>
+
+    <!-- Dialog -->
+    <div class="dialog-overlay" *ngIf="showDialog" (click)="closeDialog()">
+        <div class="dialog" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>{{ isEditMode ? 'Modifica' : 'Aggiungi' }} Rifiuto</h2>
+                <button class="close-btn" (click)="closeDialog()">×</button>
+            </div>
+
+            <div class="dialog-content" *ngIf="rifiutiForm">
+                <form [formGroup]="rifiutiForm">
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <input type="text" formControlName="tipo" [class.error]="rifiutiForm.get('tipo')?.invalid">
+                        <div class="error-message"
+                            *ngIf="rifiutiForm.get('tipo')?.invalid && rifiutiForm.get('tipo')?.hasError('required')">
+                            Il tipo è obbligatorio
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrizione</label>
+                        <input type="text" formControlName="descrizione">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Luogo Produzione</label>
+                        <input type="text" formControlName="luogoProduzione">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data Produzione</label>
+                        <input type="date" formControlName="dataProduzione">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea formControlName="note" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" (click)="closeDialog()">Annulla</button>
+                <button class="btn btn-primary" (click)="saveRifiuto()" [disabled]="rifiutiForm?.invalid">Salva</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="gestione-container">
+    <div class="header-section">
+        <h1>Gestione Personale</h1>
+        <button class="btn btn-primary" (click)="openAddDialog()">
+            <span>+</span> Aggiungi Nuovo
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Società</th>
+                    <th>Data Inizio</th>
+                    <th>Data Fine</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let persona of personale">
+                    <td>{{ persona.id }}</td>
+                    <td>{{ persona.nome }}</td>
+                    <td>{{ persona.cognome }}</td>
+                    <td>{{ persona.societa || '-' }}</td>
+                    <td>{{ persona.dataInizio?.format('DD/MM/YYYY') || '-' }}</td>
+                    <td>{{ persona.dataFine?.format('DD/MM/YYYY') || '-' }}</td>
+                    <td class="actions">
+                        <button class="btn btn-edit" (click)="openEditDialog(persona)">Modifica</button>
+                        <button class="btn btn-delete" (click)="deletePersona(persona.id)">Elimina</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="personale.length === 0" class="no-data">
+            Nessun dato disponibile
+        </div>
+    </div>
+
+    <!-- Dialog -->
+    <div class="dialog-overlay" *ngIf="showDialog" (click)="closeDialog()">
+        <div class="dialog" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>{{ isEditMode ? 'Modifica' : 'Aggiungi' }} Personale</h2>
+                <button class="close-btn" (click)="closeDialog()">×</button>
+            </div>
+
+            <div class="dialog-content" *ngIf="personaleForm">
+                <form [formGroup]="personaleForm">
+                    <div class="form-group">
+                        <label>Nome *</label>
+                        <input type="text" formControlName="nome" [class.error]="personaleForm.get('nome')?.invalid">
+                        <div class="error-message"
+                            *ngIf="personaleForm.get('nome')?.invalid && personaleForm.get('nome')?.hasError('required')">
+                            Il nome è obbligatorio
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cognome *</label>
+                        <input type="text" formControlName="cognome"
+                            [class.error]="personaleForm.get('cognome')?.invalid">
+                        <div class="error-message"
+                            *ngIf="personaleForm.get('cognome')?.invalid && personaleForm.get('cognome')?.hasError('required')">
+                            Il cognome è obbligatorio
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Società</label>
+                        <input type="text" formControlName="societa">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data Inizio</label>
+                        <input type="date" formControlName="dataInizio">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data Fine</label>
+                        <input type="date" formControlName="dataFine">
+                    </div>
+                </form>
+            </div>
+
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" (click)="closeDialog()">Annulla</button>
+                <button class="btn btn-primary" (click)="savePersona()"
+                    [disabled]="personaleForm?.invalid">Salva</button>
+            </div>
+        </div>
+    </div>
+</div>

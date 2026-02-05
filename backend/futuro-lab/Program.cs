@@ -12,6 +12,17 @@ builder.Services.AddDbContext<FuturoLabContext>(options =>
 
 builder.Services.AddControllers();
 
+// Configura CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Api Explorer and Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -61,6 +72,8 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
